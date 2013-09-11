@@ -7,9 +7,16 @@
 html, body {
   width: 100%;
   height: 100%;
+  background-color: red;
 }
 
 canvas {
   display: block;
   background: #eee;
+}
+
+#debuggingInfo{
+  position: absolute;
+  background-color: none;
+  border: 1px solid black;
 }

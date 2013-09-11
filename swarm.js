@@ -24,9 +24,9 @@ if (Meteor.isClient) {
         }
       })
 
-      canvas.addEventListener('drag', function(event){
-        console.log(event)
-      })
+      // canvas.addEventListener('drag', function(event){
+      //   console.log(event)
+      // })
 
       Swarm.dragHex();
 

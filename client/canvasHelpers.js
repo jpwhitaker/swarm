@@ -23,17 +23,27 @@ Swarm.resizeCanvas = function(){
 Swarm.dragHex = function(){
   var canvas = document.getElementById('canvas');
   var ctx = canvas.getContext('2d');
-  var selection = null;
-  var dragging = false;
+   selection = null;
+   dragging = false;
+
+  canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
 
   canvas.addEventListener('mousedown', function(e){
+    // hexagons.forEach(function(hexagon){
+    //   if(hexagon.isInBounds(e.x,e.y)){
+    //     console.log(true)
+    //   }
+    // })
+    // console.log("Selection state: " + selection)
+    // console.log("Drag state: " + dragging)
     hexagons.forEach(function(hexagon){
       if(hexagon.isInBounds(e.x,e.y) && dragging == false){
         dragging = true;
+        hexagon.selected = true
         selection = hexagon;
-        console.log(selection)
-      } else{
+      } else if (hexagon.isInBounds(e.x,e.y) && dragging == true && selection == hexagon){
         dragging = false;
+        hexagon.selected = false
         selection = null;
       }
     })
@@ -41,12 +51,21 @@ Swarm.dragHex = function(){
 
   canvas.addEventListener('mousemove', function(e){
     if(selection != null){
-      console.log(e)
+      //Update all 6 Points
       selection.Points.forEach(function(point){
-        console.log(e.x)
         point.X += e.webkitMovementX;
         point.Y += e.webkitMovementY;
       })
+      selection.TopLeftPoint.X += e.webkitMovementX;
+      selection.TopLeftPoint.Y += e.webkitMovementY;
+      selection.BottomRightPoint.X += e.webkitMovementX;
+      selection.BottomRightPoint.Y += e.webkitMovementY;
+      selection.x += e.webkitMovementX;
+      selection.y += e.webkitMovementX;
+      selection.x1 += e.webkitMovementX;
+      selection.y1 += e.webkitMovementY;
+      selection.MidPoint.X += e.webkitMovementX;
+      selection.MidPoint.Y += e.webkitMovementY;
       Swarm.ctx.clearRect(0,0, Swarm.ctx.canvas.clientWidth, Swarm.ctx.canvas.clientHeight)
       hexagons.forEach(function(hexagon){
         hexagon.draw()
@@ -56,56 +75,4 @@ Swarm.dragHex = function(){
 
 }
 
-// Swarm.canvasState = function(){
-//   var canvas = document.getElementById('canvas');
-//   var ctx = canvas.getContext('2d');
 
-//   this.valid = false;
-//   this.shapes = [];
-//   this.dragging = false;
-//   this.selection = null;
-//   this.dragoffx = 0;
-//   this.dragoffy = 0;
-
-//   var myState = this;
-
-//   //prevent double click selecting text
-//   canvas.addEventListener('selectstart', function(e) {e.preventDefault(); return false;}, false);
-
-//   //Up, down, and move are for dragging
-//   canvas.addEventListener('mousedown', function(e) {
-//     var mx = e.x;
-//     var my = e.y;
-//     for (hex in hexagons){
-//       if (hexagons[hex].isInBounds(e.x, e.y)){
-//         var mySel = hexagons[hex];
-//         myState.dragoffx = mx - mySel.x;
-//         myState.dragoffy = my - mySel.y;
-//         myState.dragging = true;
-//         myState.selection = mySel;
-//         myState.valid = false;
-//         return;
-//       }
-//     }
-
-//   if (myState.selection) {
-//     myState.selection = null;
-//     myState.valid = false; // Need to clear the old selection border
-//   }
-
-//   canvas.addEventListener('mousemove', function(e){
-//     if(myState.dragging){
-//       if(myState.selection !== null){
-//         console.log('should be moving')
-//         myState.selection.Points.forEach(function (point){
-          
-//           point.X = e.x;
-//           point.Y = e.y;
-//         })
-//       myState.selection.draw()
-//       }
-//     }
-//   })
-
-//   })
-// }
