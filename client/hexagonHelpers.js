@@ -1,4 +1,4 @@
-Swarm.hexagonHelpers = function (canvas) {
+Piece = function (canvas) {
 
   var ctx = Swarm.ctx = canvas.getContext('2d');
   /**
@@ -38,6 +38,7 @@ Swarm.hexagonHelpers = function (canvas) {
    */
   function Hexagon(id, x, y) {
     this.Points = [];//Polygon Base
+    this.lineColor = 'grey'
     var x1 = null;
     var y1 = null;
     if(Hexagon.Static.ORIENTATION == Hexagon.Orientation.Normal) {
@@ -84,7 +85,7 @@ Swarm.hexagonHelpers = function (canvas) {
   Hexagon.prototype.draw = function() {
 
     if(!this.selected)
-      ctx.strokeStyle = "grey";
+      ctx.strokeStyle = this.lineColor;
     else
       ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
@@ -204,6 +205,8 @@ Swarm.hexagonHelpers = function (canvas) {
     }
     return isIn;
   };
+
+
 
 
   Hexagon.Orientation = {
