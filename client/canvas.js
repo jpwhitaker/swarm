@@ -18,52 +18,62 @@ Canvas.resizeCanvas = function(){
   }
 }
 
+Canvas.clear = function(){
+  Swarm.ctx.clearRect(0,0, Swarm.ctx.canvas.clientWidth, Swarm.ctx.canvas.clientHeight)
 
+}
+
+Canvas.selectHex = function(e){
+  hexagons.forEach(function(hexagon){
+    if(hexagon.isInBounds(e.x,e.y) && dragging == false){
+      dragging = true;
+      hexagon.selected = true
+      selection = hexagon;
+    } else if (hexagon.isInBounds(e.x,e.y) && dragging == true && selection == hexagon){
+      dragging = false;
+      hexagon.selected = false
+      selection = null;
+    }
+  })
+}
+
+Canvas.updateHexagonPoints = function(e){
+  //Update all 6 Points
+  selection.Points.forEach(function(point){
+    point.X += e.webkitMovementX;
+    point.Y += e.webkitMovementY;
+  })
+  //update all the other helper points
+  selection.TopLeftPoint.X     += e.webkitMovementX;
+  selection.TopLeftPoint.Y     += e.webkitMovementY;
+  selection.BottomRightPoint.X += e.webkitMovementX;
+  selection.BottomRightPoint.Y += e.webkitMovementY;
+  selection.x                  += e.webkitMovementX;
+  selection.y                  += e.webkitMovementX;
+  selection.x1                 += e.webkitMovementX;
+  selection.y1                 += e.webkitMovementY;
+  selection.MidPoint.X         += e.webkitMovementX;
+  selection.MidPoint.Y         += e.webkitMovementY;
+}
 
 Canvas.dragHex = function(){
-  var canvas = document.getElementById('canvas');
-  var ctx = canvas.getContext('2d');
    selection = null;
    dragging = false;
   //prevent accidental selection of DOM elements
   canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
 
   canvas.addEventListener('mousedown', function(e){
-
-    hexagons.forEach(function(hexagon){
-      if(hexagon.isInBounds(e.x,e.y) && dragging == false){
-        dragging = true;
-        hexagon.selected = true
-        selection = hexagon;
-      } else if (hexagon.isInBounds(e.x,e.y) && dragging == true && selection == hexagon){
-        dragging = false;
-        hexagon.selected = false
-        selection = null;
-      }
-    })
+    Canvas.selectHex(e)
   })
 
   canvas.addEventListener('mousemove', function(e){
     if(selection != null){
       Canvas.getClosestPiece()
-      //Update all 6 Points
-      selection.Points.forEach(function(point){
-        point.X += e.webkitMovementX;
-        point.Y += e.webkitMovementY;
-      })
-      selection.TopLeftPoint.X += e.webkitMovementX;
-      selection.TopLeftPoint.Y += e.webkitMovementY;
-      selection.BottomRightPoint.X += e.webkitMovementX;
-      selection.BottomRightPoint.Y += e.webkitMovementY;
-      selection.x += e.webkitMovementX;
-      selection.y += e.webkitMovementX;
-      selection.x1 += e.webkitMovementX;
-      selection.y1 += e.webkitMovementY;
-      selection.MidPoint.X += e.webkitMovementX;
-      selection.MidPoint.Y += e.webkitMovementY;
-      Swarm.ctx.clearRect(0,0, Swarm.ctx.canvas.clientWidth, Swarm.ctx.canvas.clientHeight)
+      Canvas.updateHexagonPoints(e)
+      Canvas.clear()
       hexagons.forEach(function(hexagon){
         hexagon.draw()
+        // lineBetweenClosest(Canvas.getClosestPiece())
       })
     }
   })
@@ -75,7 +85,7 @@ Canvas.dragHex = function(){
 Canvas.addPieceToBoard = function(){
   hex = new Piece.Hexagon(hexagons.length+1, event.x, event.y)
   hexagons.push(hex)
-  Swarm.ctx.clearRect(0,0, Swarm.ctx.canvas.clientWidth, Swarm.ctx.canvas.clientHeight)
+  Canvas.clear()
   for (hex in hexagons){
     hexagons[hex].draw()
   }
@@ -88,7 +98,6 @@ Canvas.getClosestPiece = function(){
   current.y = selection.MidPoint.Y;
   smallestDistance = null;
   closestHex = null;
-  console.log('what is going on?')
 
   hexagons.forEach(function(hexagon){
     if(hexagon !== selection){
@@ -97,7 +106,6 @@ Canvas.getClosestPiece = function(){
       testPiece.y = hexagon.MidPoint.Y;
       if((lineDistance(current, testPiece) < smallestDistance) || smallestDistance === null){
         smallestDistance = lineDistance(current, testPiece)
-        console.log("hexagon:", hexagon,current,testPiece, lineDistance(selection, testPiece), 'current closest:', closestHex)
         closestHex = hexagon
         hexagons.forEach(function(hexagon){
           hexagon.lineColor = 'grey'
@@ -106,7 +114,8 @@ Canvas.getClosestPiece = function(){
       }
     }
   })
-  return closestHex;
+  // console.log(smallestDistance)
+  return [selection, closestHex]
 }
 
 function lineDistance( point1, point2 ){
@@ -122,3 +131,16 @@ function lineDistance( point1, point2 ){
   return Math.sqrt( xs + ys );
 }
 
+function lineBetweenClosest(hexagonsArray){
+  console.log(hexagonsArray[0].MidPoint.X)
+  console.log(hexagonsArray[1].MidPoint.X)
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(hexagonsArray[0].MidPoint.X, hexagonsArray[0].MidPoint.Y);
+    ctx.lineTo(hexagonsArray[1].MidPoint.X, hexagonsArray[1].MidPoint.Y);
+    ctx.closePath();
+    ctx.stroke();
+}
