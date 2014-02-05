@@ -73,7 +73,8 @@ Canvas.dragHex = function(){
       Canvas.clear()
       hexagons.forEach(function(hexagon){
         hexagon.draw()
-        // lineBetweenClosest(Canvas.getClosestPiece())
+        Canvas.lineBetweenClosest(Canvas.getClosestPiece())
+        Canvas.closestComplimentaryLines(Canvas.getClosestPiece())
       })
     }
   })
@@ -131,9 +132,39 @@ function lineDistance( point1, point2 ){
   return Math.sqrt( xs + ys );
 }
 
-function lineBetweenClosest(hexagonsArray){
-  console.log(hexagonsArray[0].MidPoint.X)
-  console.log(hexagonsArray[1].MidPoint.X)
+Canvas.hexagonAngle = function() {
+  twoHexes = Canvas.getClosestPiece()
+  midx1 = twoHexes[1].MidPoint.X
+  midx2 = twoHexes[0].MidPoint.X
+
+  midy1 = twoHexes[1].MidPoint.Y
+  midy2 = twoHexes[0].MidPoint.Y
+
+
+
+  var value = (Math.atan2(midy1-midy2, midx1-midx2))
+  // console.log(value)
+  // return Math.floor((value+(Math.PI/6))*6/(2*Math.PI))
+  return (Math.floor(value*6/(2*Math.PI)+2.9999999999))
+  // return (Math.floor(value*6))
+
+  // Calculate Math.floor(value*6/(2*pi)) --> you get a number between 0..5 denoting the edge pairing.
+
+
+
+}
+  var reference = 0
+
+Canvas.lineBetweenClosest = function(hexagonsArray){
+  var latest = Canvas.hexagonAngle()
+  // console.log(hexagonsArray[0].MidPoint.X)
+  // console.log(hexagonsArray[1].MidPoint.X)
+  console.log(Canvas.hexagonAngle())
+  if (reference != latest){
+    reference = latest
+    // console.log(latest)
+  }
+  // console.log(Canvas.hexagonAngle())
   var canvas = document.getElementById('canvas');
   var ctx = canvas.getContext('2d');
     ctx.strokeStyle = "black";
@@ -144,3 +175,29 @@ function lineBetweenClosest(hexagonsArray){
     ctx.closePath();
     ctx.stroke();
 }
+
+Canvas.closestComplimentaryLines = function(twoHexagons){
+  //make sides
+  for (i=0;i<6;i++){
+    if (i < 5){
+      // console.log(twoHexagons[0].Points[i])
+      //
+    }
+    else{
+      //
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

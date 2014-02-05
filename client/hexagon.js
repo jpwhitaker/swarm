@@ -217,7 +217,7 @@ Piece = function (canvas) {
   Hexagon.Static = {HEIGHT:91.14378277661477
             , WIDTH:91.14378277661477
             , SIDE:50.0
-            , ORIENTATION: Hexagon.Orientation.Side
+            , ORIENTATION: Hexagon.Orientation.Normal
             , DRAWSTATS: false};//hexagons will have 25 unit sides for now
 
   return Hexagon;
