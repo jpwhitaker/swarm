@@ -134,19 +134,22 @@ function lineDistance( point1, point2 ){
 
 Canvas.hexagonAngle = function() {
   twoHexes = Canvas.getClosestPiece()
-  midx1 = twoHexes[1].MidPoint.X
-  midx2 = twoHexes[0].MidPoint.X
+  midx1 = twoHexes[0].MidPoint.X
+  midx2 = twoHexes[1].MidPoint.X
 
-  midy1 = twoHexes[1].MidPoint.Y
-  midy2 = twoHexes[0].MidPoint.Y
+  midy1 = twoHexes[0].MidPoint.Y
+  midy2 = twoHexes[1].MidPoint.Y
 
 
+  //side = 50
+  var TWOPI = Math.PI * 2;
+  var value = Math.PI - (Math.atan2(midy2-midy1, midx2-midx1))
 
-  var value = (Math.atan2(midy1-midy2, midx1-midx2))
-  // console.log(value)
-  // return Math.floor((value+(Math.PI/6))*6/(2*Math.PI))
-  return (Math.floor(value*6/(2*Math.PI)+2.9999999999))
-  // return (Math.floor(value*6))
+    value += Math.PI/6;
+    value %= TWOPI;
+    //console.log(value)
+  return (Math.floor((value/TWOPI)*6));
+
 
   // Calculate Math.floor(value*6/(2*pi)) --> you get a number between 0..5 denoting the edge pairing.
 
@@ -159,10 +162,11 @@ Canvas.lineBetweenClosest = function(hexagonsArray){
   var latest = Canvas.hexagonAngle()
   // console.log(hexagonsArray[0].MidPoint.X)
   // console.log(hexagonsArray[1].MidPoint.X)
-  console.log(Canvas.hexagonAngle())
+  // console.log(Canvas.hexagonAngle())
   if (reference != latest){
     reference = latest
-    // console.log(latest)
+    console.log(latest)
+
   }
   // console.log(Canvas.hexagonAngle())
   var canvas = document.getElementById('canvas');
